@@ -53,7 +53,9 @@ This is the official implementation for [ODEAT: Ensemble Adversarial Training fo
     bash tools/dist_test2.sh [config_file] [ckpt_path] [num_gpus] --eval bbox
     ```
 
-4. **Check Model's Robustness**
+  Config files are in [`coco/black_configs`](coco/black_configs).
+
+5. **Check Model's Robustness**
   Run the following command to check the model's robustness on adversarial examples:
     ```bash
     bash tools/dist_test3.sh [config_file] [ckpt_path] [num_gpus] --eval bbox
