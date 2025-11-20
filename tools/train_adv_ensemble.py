@@ -49,30 +49,20 @@ new_neck_1 = dict(
     out_channels=256,
     num_outs=5)
 
-# new_backbone_2 = dict(
-#     type='mmcls.SwinTransformer',
-#     arch='base',
-#     out_indices=(0, 1, 2, 3),
-#     frozen_stages=1,
-#     drop_path_rate=0.1,
-#     pretrained=False,
-#     init_cfg=dict(type='Pretrained', checkpoint=checkpoint_2))
+new_backbone_2 = dict(
+    type='mmcls.SwinTransformer',
+    arch='base',
+    out_indices=(0, 1, 2, 3),
+    frozen_stages=1,
+    drop_path_rate=0.1,
+    pretrained=False,
+    init_cfg=dict(type='Pretrained', checkpoint=checkpoint_2))
 
-# new_backbone_2 = dict(
-#     type='TIMMBackbone',
-#     model_name='swin_base_patch4_window7_224',
-#     pretrained=False,
-#     out_indices=(0, 1, 2, 3),
-#     drop_path_rate=0.1,
-#     init_cfg=dict(type='Pretrained', checkpoint=checkpoint_2),
-#     dynamic_img_size=True
-# )
-
-# new_neck_2 = dict(
-#     type='FPN',
-#     in_channels=[128, 256, 512, 1024],
-#     out_channels=256,
-#     num_outs=5)
+new_neck_2 = dict(
+    type='FPN',
+    in_channels=[128, 256, 512, 1024],
+    out_channels=256,
+    num_outs=5)
 
 # XCiT-S12 backbone（来自 timm）
 # new_backbone_3 = dict(
