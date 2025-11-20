@@ -66,7 +66,7 @@ This is the official implementation for [ODEAT: Ensemble Adversarial Training fo
     bash tools/dist_test3.sh [config_file] [ckpt_path] [num_gpus] --eval bbox
     ```
   
-    Before running this, you need to modify the `single_gpu_test` and `multi_gpu_test` functions in `mmdet/apis/test3.py`.
+    Before running this, you need to modify the `single_gpu_test` and `multi_gpu_test` functions in [`mmdet/apis/test3.py`](mmdet/apis/test3.py).
   
     Set the variable `adv_load_dir` to **your adversarial example folder**, for example: adv_load_dir = "/path/to/your/adversarial_examples"
 
