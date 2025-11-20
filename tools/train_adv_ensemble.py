@@ -29,7 +29,7 @@ import numpy as np
 np.bool = bool
 
 checkpoint_1 = "/root/anaconda3/oddefense/ckpts/convnext_tiny_mmcls-linf-eps-4-advan.pth"
-checkpoint_2 = "/root/anaconda3/oddefense/ckpts/swin_base_at.pth"
+checkpoint_2 = "/root/anaconda3/oddefense/ckpts/swin_base_ares_mmcls.pth"
 checkpoint_3 = "/root/anaconda3/oddefense/ckpts/xcit-s12-ImageNet-eps-4.pth"
 
 new_backbone_1 = dict(
