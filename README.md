@@ -24,6 +24,7 @@ This is the official implementation for [ODEAT: Ensemble Adversarial Training fo
 
   Download pretrained ResNet-50 backbone: <a href='https://huggingface.co/suixin1424/oddefense/blob/main/resnet50_linf_eps4_pure.pth'>resnet-50 pretrained </a>
   Download pretrained ConvNeXt-T backbone: <a href='https://huggingface.co/suixin1424/oddefense/blob/main/convnext_tiny_mmcls-linf-eps-4-advan.pth'>convnext-t pretrained </a>
+  Download pretrained SwinTransformer-Base backbone: <a href='https://huggingface.co/suixin1424/oddefense/blob/main/convnext_tiny_mmcls-linf-eps-4-advan.pth'>convnext-t pretrained </a>
 
   
 
@@ -40,6 +41,8 @@ This is the official implementation for [ODEAT: Ensemble Adversarial Training fo
     ```bash
     bash tools/dist_train_ensemble.sh [config_file] [num_gpus]
     ```
+
+    If you want to change ensemble models, please modify the train file [`mmdet/tools/train_adv_ensemble.py`](mmdet/tools/train_adv_ensemble.py).
 
 3. **Evaluation**  
   Run the following command to evaluate your model:
