@@ -1,18 +1,12 @@
 <div align="center">
-  <h3>On the Importance of Backbone to the Adversarial Robustness of Object Detectors</h3>
-  <a href="https://arxiv.org/pdf/2305.17438">
-        <img alt="Build" src="https://img.shields.io/badge/arXiv%20paper-2305.17438-b31b1b.svg">
-  </a>
+  <h3>ODEAT: Ensemble Adversarial Training for Object Detection</h3>
 </div>
 
 
 <h2 id="quick-start">Quick Start</h2>
 
-This is the official implementation for [On the Importance of Backbone to the Adversarial Robustness of Object Detectors](https://ieeexplore.ieee.org/abstract/document/10891598/), IEEE TIFS 2025.
+This is the official implementation for [ODEAT: Ensemble Adversarial Training for Object Detection]().
 
-We further extend this line of research to defend against **physically realizable attacks** in our new paper  
-**"PBCAT: Patch-Based Composite Adversarial Training against Physically Realizable Attacks on Object Detection"**, accepted to *ICCV 2025*.  
-🔗 Project page: [https://github.com/LixiaoTHU/oddefense-PatchAT](https://github.com/LixiaoTHU/oddefense-PatchAT)
 
 <h3>Preparation</h3>
 
@@ -44,7 +38,7 @@ We further extend this line of research to defend against **physically realizabl
 2. **Training**  
    Run the following command to start training:
     ```bash
-    bash tools/dist_train.sh [config_file] [num_gpus]
+    bash tools/dist_train_ensemble.sh [config_file] [num_gpus]
     ```
 
 3. **Evaluation**  
@@ -52,6 +46,23 @@ We further extend this line of research to defend against **physically realizabl
     ```bash
     bash tools/dist_test.sh [config_file] [ckpt_path] [num_gpus] --eval bbox
     ```
+
+4. **Adversarial Examples**
+  Run the following command to generate adversarial examples:
+    ```bash
+    bash tools/dist_test2.sh [config_file] [ckpt_path] [num_gpus] --eval bbox
+    ```
+
+  Run the following command to check the model's robustness on adversarial examples:
+    ```bash
+    bash tools/dist_test3.sh [config_file] [ckpt_path] [num_gpus] --eval bbox
+    ```
+  Before running this, you need to modify the `single_gpu_test` and `multi_gpu_test` functions in `mmdet/apis/test3.py`.
+  Set the variable `adv_load_dir` to **your adversarial example folder**, for example:
+    ```python
+    adv_load_dir = "/path/to/your/adversarial_examples"
+    ```
+
 
 <h2 id="models">Models</h2>
 
@@ -64,24 +75,24 @@ We further extend this line of research to defend against **physically realizabl
 | FCOS ConvNeXt     | [`fcos_convnext_caffe_fpn_gn-head_1x_coco_freeat_all.py`](fcos/fcos_convnext_caffe_fpn_gn-head_1x_coco_freeat_all.py)                                       | <a href='https://huggingface.co/suixin1424/oddefense/blob/main/fcos_convnext.pth'> click to download </a>            |
 | DN-DETR ConvNeXt   | [`dn_detr_convnext_8x2_12e_coco_freeat_all.py`](dn_detr/dn_detr_convnext_8x2_12e_coco_freeat_all.py)                                   | <a href='https://huggingface.co/suixin1424/oddefense/blob/main/dndetr_convnext.pth'> click to download </a>         |
 
-<h3>
-Acknowledgement
-</h3>
+### Acknowledgement
 
-If you find that our work is helpful to you, please star this project and consider cite:
+This repository is based on the official implementation of the following works.  
+If you find this code useful in your research, please also consider citing:
 
-```
+```bibtex
 @article{li2025importance,
-  title={On the importance of backbone to the adversarial robustness of object detectors},
-  author={Li, Xiao and Chen, Hang and Hu, Xiaolin},
-  journal={IEEE Transactions on Information Forensics and Security},
-  year={2025},
-  publisher={IEEE}
+  title   = {On the importance of backbone to the adversarial robustness of object detectors},
+  author  = {Li, Xiao and Chen, Hang and Hu, Xiaolin},
+  journal = {IEEE Transactions on Information Forensics and Security},
+  year    = {2025},
+  publisher = {IEEE}
 }
+
 @inproceedings{li2025pbcat,
-  title={PBCAT: Patch-based composite adversarial training against physically realizable attacks on object detection},
-  author={Li, Xiao and Zhu, Yiming and Huang, Yifan and Zhang, Wei and He, Yingzhe and Shi, Jie and Hu, Xiaolin},
-  booktitle={{IEEE InternationalConference on Computer Vision},
-  year={2025}
+  title     = {PBCAT: Patch-based composite adversarial training against physically realizable attacks on object detection},
+  author    = {Li, Xiao and Zhu, Yiming and Huang, Yifan and Zhang, Wei and He, Yingzhe and Shi, Jie and Hu, Xiaolin},
+  booktitle = {IEEE International Conference on Computer Vision (ICCV)},
+  year      = {2025}
 }
-```
+···
