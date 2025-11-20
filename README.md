@@ -11,8 +11,8 @@ This is the official implementation for [ODEAT: Ensemble Adversarial Training fo
 <h3>Preparation</h3>
 
   ```sh
-  conda create -n oddefense python=3.10
-  conda activate oddefense
+  conda create -n odeat python=3.10
+  conda activate odeat
 
   conda install pytorch==1.13.1 torchvision==0.14.1 torchaudio==0.13.1 pytorch-cuda=11.7 -c pytorch -c nvidia
 
