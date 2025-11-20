@@ -21,6 +21,10 @@ from mmdet.utils import (build_ddp, build_dp, compat_cfg, get_device,
                          replace_cfg_vals, setup_multi_processes,
                          update_data_root)
 
+import numpy as np
+
+np.bool = bool
+
 
 def parse_args():
     parser = argparse.ArgumentParser(
@@ -108,7 +112,7 @@ def parse_args():
 
     parser.add_argument('--no_adv', action='store_true')
     parser.add_argument('--num_steps', type=int, default=10)
-    parser.add_argument('--adv_type', type=str, default="cls")
+    parser.add_argument('--adv_type', type=str, default="mi_fgsm") # new
 
     parser.add_argument('--num_per_gpu', type=int, default=1)
 
