@@ -19,6 +19,45 @@ from mmdet.utils import (build_ddp, build_dp, compat_cfg,
                          find_latest_checkpoint, get_root_logger)
 from .adv_eval_hooks import AdvDistEvalHook
 
+os.environ["HF_ENDPOINT"] = "https://hf-mirror.com"
+os.environ["HUGGINGFACE_HUB_ENDPOINT"] = "https://hf-mirror.com"
+os.environ["HF_HUB_ENABLE_HF_TRANSFER"] = "1"
+os.environ["HF_HUB_READ_TIMEOUT"] = "120"
+
+import timm
+import torch.nn as nn
+from mmdet.models import BACKBONES
+
+@BACKBONES.register_module()
+class TIMMBackbone(nn.Module):
+    """
+    轻量封装：用 timm 的 features_only 输出多尺度特征。
+    默认选一个与 FPN 匹配 [256,512,1024,2048] 的模型（如 seresnext50_32x4d）。
+    """
+    def __init__(self, model_name='seresnext50_32x4d', pretrained=True, out_indices=(1,2,3,4), **kwargs):
+        super().__init__()
+        self.out_indices = out_indices
+        self.timm = timm.create_model(model_name, pretrained=pretrained, features_only=True, out_indices=out_indices)
+        if not pretrained:
+            init_cfg = kwargs['init_cfg']
+            state_dict = torch.load(init_cfg.checkpoint, map_location="cpu")
+            missing, unexpected = self.timm.load_state_dict(state_dict, strict=False)
+            # print("Missing keys:", missing)
+            # print("Unexpected keys:", unexpected)
+        # 校验通道数（可打印或断言）
+        self.out_channels = [f['num_chs'] for f in self.timm.feature_info]  # 全部 stages
+        self.selected_channels = [self.timm.feature_info[i]['num_chs'] for i in out_indices]
+        # 如果你**必须**是 [256,512,1024,2048]，可以这里 assert
+        # assert self.selected_channels == [256,512,1024,2048]
+
+    def init_weights(self):
+        # 已由 timm 处理，这里可以留空
+        pass
+
+    def forward(self, x):
+        feats = self.timm(x)   # list of tensors for selected out_indices
+        return tuple(feats)     # MMDet 期望 tuple
+
 def init_random_seed(seed=None, device='cuda'):
     """Initialize random seed.
 
@@ -123,7 +162,8 @@ def train_detector(model,
                    distributed=False,
                    validate=False,
                    timestamp=None,
-                   meta=None):
+                   meta=None,
+                   backbone_neck_lst=None):
 
     cfg = compat_cfg(cfg)
     logger = get_root_logger(log_level=cfg.log_level)
@@ -176,6 +216,9 @@ def train_detector(model,
             work_dir=cfg.work_dir,
             logger=logger,
             meta=meta))
+
+    if backbone_neck_lst: # new
+        runner.backbone_neck_lst = backbone_neck_lst # new
 
     # an ugly workaround to make .log and .log.json filenames the same
     runner.timestamp = timestamp
