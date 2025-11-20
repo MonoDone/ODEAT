@@ -4,15 +4,15 @@ _base_ = [
     '../configs/_base_/schedules/schedule_1x.py', '../configs/_base_/default_runtime.py'
 ]
 
-checkpoint_at = "/home/lixiao/ssd/workdir/oddefense/resnet50_linf_eps4_pure.pth"
+checkpoint_at = "/root/anaconda3/oddefense/ckpts/resnet50_linf_eps4_pure.pth"
 model = dict(
     backbone=dict(frozen_stages=1, init_cfg=dict(type='Pretrained', checkpoint=checkpoint_at)),
     train_cfg=dict(rcnn=dict(clip=6))
 )
 
 dataset_type = 'CocoDataset'
-data_root = '/home/share/datasets/coco/'
-work_dir = "/home/lixiao/ssd/workdir/oddefense/frcnn/coco_faster_freeat_all"
+data_root = '/root/anaconda3/oddefense/datasets/coco/'
+work_dir = "/root/anaconda3/oddefense/frcnn/coco_faster_freeat_all"
 
 # adversarial trainging and eval config
 free_m = 4
@@ -30,7 +30,7 @@ adv_cfg = dict(
 
 test_adv_cfg = dict(
     adv_flag=True,
-    adv_type="cls", # assert in ["cls", "reg", "cwa", "dag", "ours"]
+    adv_type="mi_fgsm", # assert in ["cls", "reg", "cwa", "dag", "ours", "mi_fgsm"]
     step_size=1,
     epsilon=4,
     num_steps=10,
