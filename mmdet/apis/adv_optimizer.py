@@ -20,6 +20,8 @@ try:
 except ImportError:
     pass
 
+from mmcv.parallel import DataContainer, scatter # new
+
 
 @HOOKS.register_module()
 class AdvOptimizerHook(OptimizerHook):
@@ -60,7 +62,9 @@ class AdvOptimizerHook(OptimizerHook):
             self.detect_anomalous_parameters(runner.outputs['loss'], runner)
         
         model = runner.model.module
+        attacker = runner.attacker # new
         epsilon = model.epsilon
+        # epsilon = runner._epsilon[runner._epoch] # new
         noise_transform = (lambda x: x / model.img_std, lambda x: x * model.img_std)
 
 
@@ -78,11 +82,35 @@ class AdvOptimizerHook(OptimizerHook):
             adv_noise = noise_transform[0](adv_noise)
         elif model.adv_type == "all":
             runner.outputs['loss'].backward(retain_graph=True)
+            grad_mtd = 0
+            if runner._index:
+                ## new ##
+                aux_img = model.aux_img
+                pgd_img = (aux_img + model.adv_noise).detach().requires_grad_(True)
+                attack_data = copy.copy(runner.data_batch)
+                attack_data['img'] = DataContainer(pgd_img, stack=True)
+                dev = next(attacker.parameters()).device
+                if dev.type == 'cuda':
+                    target_gpus = [dev.index if dev.index is not None else 0]
+                    attack_data = scatter(attack_data, target_gpus)[0]
+                else:
+                    # CPU fallback：手动把 DataContainer 解包
+                    attack_data = {
+                        k: (v._data[0] if isinstance(v, DataContainer) else v)
+                        for k, v in attack_data.items()
+                    }
+                out = attacker.train_step(attack_data, optimizer=None)
+                losses_generate = out['loss']
+                grad_mtd = torch.autograd.grad(losses_generate, [attack_data['img']])[0].detach()
+            else:
+                grad_mtd = 0
             losses_generate = model.head_loss
-            grad_mtd = torch.autograd.grad(losses_generate, [model.aux_img])[0].detach()
+            grad_self = torch.autograd.grad(losses_generate, [model.aux_img])[0].detach()
+            alpha = 0.5
+            real_grad_mtd = alpha * grad_mtd + (1 - alpha) * grad_self
 
             adv_noise = noise_transform[1](model.adv_noise)
-            adv_noise = torch.clamp(adv_noise + epsilon * torch.sign(grad_mtd), -epsilon, epsilon).detach_()
+            adv_noise = torch.clamp(adv_noise + epsilon * torch.sign(real_grad_mtd), -epsilon, epsilon).detach_()
             adv_noise = noise_transform[0](adv_noise)
         elif model.adv_type == "com":
             runner.outputs['loss'].backward()
