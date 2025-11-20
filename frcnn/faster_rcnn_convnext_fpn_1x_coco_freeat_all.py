@@ -4,7 +4,7 @@ _base_ = [
     '../configs/_base_/schedules/schedule_1x.py', '../configs/_base_/default_runtime.py'
 ]
 
-checkpoint_at = "/home/lixiao/ssd/workdir/oddefense/convnext_tiny_mmcls-linf-eps-4-advan.pth"
+checkpoint_at = "/root/miniconda3/oddefense/ckpts/convnext_tiny_mmcls-linf-eps-4-advan.pth"
 custom_imports = dict(imports=['mmcls.models'], allow_failed_imports=False)
 
 model = dict(
@@ -29,8 +29,8 @@ model = dict(
 )
 
 dataset_type = 'CocoDataset'
-data_root = '/home/share/datasets/coco/'
-work_dir = "/home/lixiao/ssd/workdir/oddefense/frcnn/coco_faster_convnext_freeat_all"
+data_root = '/root/miniconda3/oddefense/datasets/coco/'
+work_dir = "/root/miniconda3/oddefense/frcnn/coco_faster_convnext_freeat_all"
 
 # adversarial trainging and eval config
 free_m = 4
