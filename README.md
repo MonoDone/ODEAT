@@ -60,41 +60,28 @@ This is the official implementation for [ODEAT: Ensemble Adversarial Training fo
     ```
   
   Before running this, you need to modify the `single_gpu_test` and `multi_gpu_test` functions in `mmdet/apis/test3.py`.
-  Set the variable `adv_load_dir` to **your adversarial example folder**, for example:
-    ```python
-    adv_load_dir = "/path/to/your/adversarial_examples"
-    ```
+  
+  Set the variable `adv_load_dir` to **your adversarial example folder**, for example: adv_load_dir = "/path/to/your/adversarial_examples"
 
 
 <h2 id="models">Models</h2>
 
 | **Model**       | **Config File**                                                                                     | **Checkpoint**                          |
 |------------------|-----------------------------------------------------------------------------------------------------------|------------------------------------------|
-| Faster-RCNN  | [`faster_rcnn_r50_fpn_1x_coco_freeat_all.py`](frcnn/faster_rcnn_r50_fpn_1x_coco_freeat_all.py)            | <a href='https://huggingface.co/suixin1424/oddefense/blob/main/frcnn_at.pth'> click to download </a> |
-| FCOS            | [`fcos_r50_caffe_fpn_gn-head_1x_coco_freeat_all.py`](fcos/fcos_r50_caffe_fpn_gn-head_1x_coco_freeat_all.py)                                       | <a href='https://huggingface.co/suixin1424/oddefense/blob/main/fcos_at.pth'> click to download </a>            |
-| DN-DETR         | [`dn_detr_r50_8x2_12e_coco_freeat_all.py`](dn_detr/dn_detr_r50_8x2_12e_coco_freeat_all.py)                                   | <a href='https://huggingface.co/suixin1424/oddefense/blob/main/dndetr_at.pth'> click to download </a>         |
-| Faster-RCNN ConvNeXt   | [`faster_rcnn_convnext_fpn_1x_coco_freeat_all.py`](frcnn/faster_rcnn_convnext_fpn_1x_coco_freeat_all.py)                                   | <a href='https://huggingface.co/suixin1424/oddefense/blob/main/frcnn_convnext.pth'> click to download </a>         |
-| FCOS ConvNeXt     | [`fcos_convnext_caffe_fpn_gn-head_1x_coco_freeat_all.py`](fcos/fcos_convnext_caffe_fpn_gn-head_1x_coco_freeat_all.py)                                       | <a href='https://huggingface.co/suixin1424/oddefense/blob/main/fcos_convnext.pth'> click to download </a>            |
-| DN-DETR ConvNeXt   | [`dn_detr_convnext_8x2_12e_coco_freeat_all.py`](dn_detr/dn_detr_convnext_8x2_12e_coco_freeat_all.py)                                   | <a href='https://huggingface.co/suixin1424/oddefense/blob/main/dndetr_convnext.pth'> click to download </a>         |
+| Faster-RCNN-ENSEMBLE  | [`faster_rcnn_r50_fpn_1x_coco_freeat_all.py`](frcnn/faster_rcnn_r50_fpn_1x_coco_freeat_all.py)            | <a href='https://pan.baidu.com/s/1Ip3rHBI-wRI_LZzCFX-F6g?pwd=mono'> click to download </a> |
+| FCOS-ENSEMBLE            | [`fcos_r50_caffe_fpn_gn-head_1x_coco_freeat_all.py`](fcos/fcos_r50_caffe_fpn_gn-head_1x_coco_freeat_all.py)                                       | <a href='https://pan.baidu.com/s/1UblaSKf2i_EFrBgs_f9luA?pwd=mono'> click to download </a>            |
+| DN-DETR-ENSEMBLE         | [`dn_detr_r50_8x2_12e_coco_freeat_all.py`](dn_detr/dn_detr_r50_8x2_12e_coco_freeat_all.py)                                   | <a href='https://pan.baidu.com/s/1Qkea_uHt9OLfTZzYZmsiYw?pwd=mono'> click to download </a>         |
+| Faster-RCNN ConvNeXt-ENSEMBLE   | [`faster_rcnn_convnext_fpn_1x_coco_freeat_all.py`](frcnn/faster_rcnn_convnext_fpn_1x_coco_freeat_all.py)                                   | <a href='https://pan.baidu.com/s/1MtvCIfEAfo6CvHYAwoytsg?pwd=mono'> click to download </a>         |
+| FCOS ConvNeXt-ENSEMBLE     | [`fcos_convnext_caffe_fpn_gn-head_1x_coco_freeat_all.py`](fcos/fcos_convnext_caffe_fpn_gn-head_1x_coco_freeat_all.py)                                       | <a href='https://pan.baidu.com/s/1iU1XvIAlA5vocnpcy9w5TA?pwd=mono'> click to download </a>            |
+| DN-DETR ConvNeXt-ENSEMBLE   | [`dn_detr_convnext_8x2_12e_coco_freeat_all.py`](dn_detr/dn_detr_convnext_8x2_12e_coco_freeat_all.py)                                   | <a href='https://pan.baidu.com/s/1HlmAMKd-tINxTK8EATO8Sw?pwd=mono'> click to download </a>         |
+| Faster-RCNN-TWO-ENSEMBLE   | [`faster_rcnn_r50_fpn_1x_coco_freeat_all.py`](frcnn/faster_rcnn_r50_fpn_1x_coco_freeat_all.py)            | <a href='https://pan.baidu.com/s/1iLQemSDTuqIWhBNLksgAGA?pwd=mono'> click to download </a> |
+| Faster-RCNN-ENSEMBLE-PROCESSING   | [`faster_rcnn_r50_fpn_1x_coco_freeat_all.py`](frcnn/faster_rcnn_r50_fpn_1x_coco_freeat_all.py)            | <a href='https://pan.baidu.com/s/1c-eVyavTA88usJvrF_0tKQ?pwd=mono'> click to download </a> |
 
 ### Acknowledgement
 
-This repository is based on the official implementation of the following works.  
-If you find this code useful in your research, please also consider citing:
+This repository is built upon and modified from the open-source project
+[oddefense](https://github.com/thu-ml/oddefense) by Tsinghua University Machine Learning Group.
+We sincerely thank the authors for releasing their code.
 
-```bibtex
-@article{li2025importance,
-  title   = {On the importance of backbone to the adversarial robustness of object detectors},
-  author  = {Li, Xiao and Chen, Hang and Hu, Xiaolin},
-  journal = {IEEE Transactions on Information Forensics and Security},
-  year    = {2025},
-  publisher = {IEEE}
-}
+If you use this code in your research, please also consider citing the original oddefense work in addition to ours.
 
-@inproceedings{li2025pbcat,
-  title     = {PBCAT: Patch-based composite adversarial training against physically realizable attacks on object detection},
-  author    = {Li, Xiao and Zhu, Yiming and Huang, Yifan and Zhang, Wei and He, Yingzhe and Shi, Jie and Hu, Xiaolin},
-  booktitle = {IEEE International Conference on Computer Vision (ICCV)},
-  year      = {2025}
-}
-···
