@@ -43,13 +43,13 @@ class AdvEpochBasedRunner(EpochBasedRunner):
             self.log_buffer.update(outputs['log_vars'], outputs['num_samples'])
         self.outputs = outputs
 
-    def train(self, data_loader, **kwargs):
+    def train(self, data_loader, **kwargs):        
         self.model.train()
         self.mode = 'train'
         self.data_loader = data_loader
 
         if self.freeze_dict is not None and self._epoch in self.freeze_dict:
-                self.model.module.backbone.frozen_stages = self.freeze_dict[self._epoch]
+            self.model.module.backbone.frozen_stages = self.freeze_dict[self._epoch]
 
         self._max_iters = self._max_epochs * len(self.data_loader)
         self.call_hook('before_train_epoch')
@@ -57,7 +57,16 @@ class AdvEpochBasedRunner(EpochBasedRunner):
 
 
         self.free_m = self.model.module.free_m
+        # self.free_m = self._free_m[self._epoch] # new
         for i, data_batch in enumerate(self.data_loader):
+            ## new ##
+            self._index = self._iter % (len(self.backbone_neck_lst[0]) + 1)
+            if self._index:
+                self.attacker.backbone = self.backbone_neck_lst[0][self._index - 1]
+                self.attacker.neck = self.backbone_neck_lst[1][self._index - 1]
+                self.attacker.eval()
+                for p in self.attacker.parameters():
+                    p.requires_grad_(False)
             # self._inner_iter = i
             self.data_batch = data_batch # Not changed by the model
 
@@ -138,6 +147,10 @@ class AdvEpochBasedRunner(EpochBasedRunner):
         self.logger.info('workflow: %s, max: %d epochs', workflow,
                          self._max_epochs)
         self.call_hook('before_run')
+        self.attacker = copy.deepcopy(self.model.module) # new
+        _free_m = self.model.module.free_m // 2 # new
+        _epsilon = self.model.module.epsilon # new
+        self._free_m, self._epsilon = generate_fat_multipliers_from_initial(_free_m, _epsilon, self._max_epochs)
 
         while self.epoch < self._max_epochs:
             for i, flow in enumerate(workflow):
@@ -160,4 +173,41 @@ class AdvEpochBasedRunner(EpochBasedRunner):
 
         time.sleep(1)  # wait for some hooks like loggers to finish
         self.call_hook('after_run')
+
+## new ##
+def generate_fat_multipliers_from_initial(initial_free_m, initial_epsilon, max_epochs):
+    """
+    Generate dynamic multipliers for `free_m` and `epsilon` based on given initial values.
+    This function splits the epochs into 4 stages and computes the multipliers accordingly.
+
+    Args:
+    - initial_free_m (int): The initial multiplier for `free_m` at the first stage.
+    - initial_epsilon (float): The initial epsilon value for the first stage.
+    - max_epochs (int): The total number of epochs for training.
+
+    Returns:
+    - free_m_multipliers (list): List of multipliers for `free_m` over `max_epochs`.
+    - epsilon_multipliers (list): List of multipliers for `epsilon` over `max_epochs`.
+    """
+    # Ensure max_epochs is at least 4 for meaningful stage division
+    if max_epochs < 4:
+        raise ValueError("max_epochs must be at least 4 to split into four stages.")
+    
+    # Calculate the length of each stage
+    stage_length = max_epochs // 4
+    remaining_epochs = max_epochs % 4
+    
+    # Adjust stage lengths based on remaining epochs
+    stage_lengths = [stage_length] * 4
+    for i in range(remaining_epochs):
+        stage_lengths[i] += 1
+    
+    # Generate multipliers for `free_m` and `epsilon`
+    free_m_multipliers = [initial_free_m] * stage_lengths[0] + [initial_free_m * 2] * stage_lengths[1] + \
+                          [initial_free_m * 2] * stage_lengths[2] + [initial_free_m * 4] * stage_lengths[3]
+    
+    epsilon_multipliers = [initial_epsilon] * stage_lengths[0] + [initial_epsilon * 1.5] * stage_lengths[1] + \
+                           [initial_epsilon * 1.5] * stage_lengths[2] + [initial_epsilon * 2] * stage_lengths[3]
+    
+    return free_m_multipliers, epsilon_multipliers
 
