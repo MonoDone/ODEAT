@@ -30,7 +30,7 @@ adv_cfg = dict(
 
 test_adv_cfg = dict(
     adv_flag=True,
-    adv_type="mi_fgsm", # assert in ["cls", "reg", "cwa", "dag", "ours", "mi_fgsm"]
+    adv_type="cls", # assert in ["cls", "reg", "cwa", "dag", "ours", "mi_fgsm"]
     step_size=1,
     epsilon=4,
     num_steps=10,
